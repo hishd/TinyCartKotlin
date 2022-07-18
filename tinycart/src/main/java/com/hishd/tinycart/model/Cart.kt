@@ -2,9 +2,18 @@ package com.hishd.tinycart.model
 
 import com.hishd.tinycart.exception.InvalidQuantityException
 import com.hishd.tinycart.exception.ItemtNotFoundException
+import java.util.*
 
-object Cart {
+class Cart private constructor() {
     private val cartItems: MutableMap<Item, Int> = mutableMapOf()
+
+    companion object {
+        private val cart = Cart()
+
+        fun getCart() : Cart {
+            return cart
+        }
+    }
 
     @Throws(InvalidQuantityException::class)
     fun addItem(item: Item, quantity: Int) {
@@ -20,7 +29,7 @@ object Cart {
     }
 
     @Throws(ItemtNotFoundException::class, InvalidQuantityException::class)
-    fun updateItem(item: Item, quantity: Int) {
+    fun updateQuantity(item: Item, quantity: Int) {
         if (quantity == 0)
             throw InvalidQuantityException()
         if (!cartItems.containsKey(item))
@@ -77,4 +86,13 @@ object Cart {
     }
 
     fun getItemsWithQuantity() : Map<Item, Int> = cartItems
+
+    override fun toString(): String {
+        val stringBuilder: StringBuilder = StringBuilder()
+        for(item in cartItems) {
+            stringBuilder.append(String.format(Locale.ENGLISH, "Item Name : %s, Price : %f, Quantity : %d%n", item.key.name, item.key.price, item.value))
+        }
+
+        return stringBuilder.toString()
+    }
 }
